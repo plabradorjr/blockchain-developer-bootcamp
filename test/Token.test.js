@@ -6,7 +6,7 @@ require('chai')
     .use(require('chai-as-promised'))
     .should()
 
-contract('Token', ([deployer, receiver]) => {
+contract('Token', ([deployer, receiver, exchange]) => {
     const name = 'DApp Token'
     const symbol = 'DAPP'
     const decimals = '18'
@@ -92,6 +92,27 @@ contract('Token', ([deployer, receiver]) => {
 
             it('rejects invalid recipients', async () => {
                 await token.transfer(0x0, amount, { from: deployer} ).should.be.rejected
+            })
+        })
+
+        describe('approving tokens', () => {
+            let result
+            let amount
+
+            beforeEach(async () => {
+                amount = tokens(100)
+                result = await token.approve(exchange, amount, { from: deployer })
+            })
+
+            describe('success', () => {
+                it('allocates an allowance for delegated token spending on exchange', async () => {
+                    const allowance = await token.allowance(deployer, exchange )
+                    allowance.toString().should.equal(amount.toString())
+                })
+            })
+
+            describe('failure', () => {
+                
             })
         })
 
