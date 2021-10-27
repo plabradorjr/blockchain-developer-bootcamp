@@ -3,6 +3,18 @@ pragma solidity ^0.5.0;
 import "./Token.sol";
 import "openzeppelin-solidity/contracts/math/SafeMath.sol";
 
+// TO DO:
+// [X] Set the fee account
+// [X] Deposit Ether
+// [X] Withdraw Ether
+// [X] Deposit tokens
+// [X] Withdraw tokens
+// [X] Check balances
+// [X] Make order
+// [X] Cancel order
+// [ ] Fill order
+// [ ] Charge fees
+
 
 contract Exchange {
     using SafeMath for uint;
