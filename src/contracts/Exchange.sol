@@ -25,18 +25,14 @@ contract Exchange {
     address constant ETHER = address(0); // allows to store Ether in tokens mapping with blank address
     mapping(address => mapping(address => uint256)) public tokens;
     mapping(uint256 => _Order) public orders;
-    uint256 public orderCount:
-
-    // Events
-    event Deposit(address token, address user, uint256 amount, uint256 balance);
-    event Withdraw(address token, address user, uint amount, uint balance);
+    uint256 public orderCount;
 
     constructor (address _feeAccount, uint256 _feePercent) public {
          feeAccount = _feeAccount;
          feePercent = _feePercent;
     }
 
-        // Events
+    // Events
     event Deposit(address token, address user, uint256 amount, uint256 balance);
     event Withdraw(address token, address user, uint256 amount, uint256 balance);
     event Order(
@@ -57,7 +53,7 @@ contract Exchange {
         uint256 amountGive,
         uint256 timestamp
     );
-    
+
     // Structs
     struct _Order {
         uint256 id;
