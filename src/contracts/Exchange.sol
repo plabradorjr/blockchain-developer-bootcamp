@@ -24,6 +24,8 @@ contract Exchange {
     uint256 public feePercent; // the fee percentage
     address constant ETHER = address(0); // allows to store Ether in tokens mapping with blank address
     mapping(address => mapping(address => uint256)) public tokens;
+    mapping(uint256 => _Order) public orders;
+    uint256 public orderCount:
 
     // Events
     event Deposit(address token, address user, uint256 amount, uint256 balance);
@@ -32,6 +34,39 @@ contract Exchange {
     constructor (address _feeAccount, uint256 _feePercent) public {
          feeAccount = _feeAccount;
          feePercent = _feePercent;
+    }
+
+        // Events
+    event Deposit(address token, address user, uint256 amount, uint256 balance);
+    event Withdraw(address token, address user, uint256 amount, uint256 balance);
+    event Order(
+        uint256 id,
+        address user,
+        address tokenGet,
+        uint256 amountGet,
+        address tokenGive,
+        uint256 amountGive,
+        uint256 timestamp
+    );
+    event Cancel(
+        uint256 id,
+        address user,
+        address tokenGet,
+        uint256 amountGet,
+        address tokenGive,
+        uint256 amountGive,
+        uint256 timestamp
+    );
+    
+    // Structs
+    struct _Order {
+        uint256 id;
+        address user;
+        address tokenGet;
+        uint256 amountGet;
+        address tokenGive;
+        uint256 amountGive;
+        uint256 timestamp;
     }
 
     // fallback: reverts if Ether is sent to this smart contract by mistake
@@ -68,6 +103,12 @@ contract Exchange {
 
     function balanceOf(address _token, address _user) public view returns (uint256) {
         return tokens[_token][_user];
+    }
+    
+    function makeOrder(address _tokenGet, uint256 _amountGet, address _tokenGive, uint256 _amountGive) public {
+        orderCount = orderCount.add(1);
+        orders[orderCount] = _Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, now);
+        emit Order(orderCount, msg.sender, _tokenGet, _amountGet, _tokenGive, _amountGive, now);
     }
 
 }
