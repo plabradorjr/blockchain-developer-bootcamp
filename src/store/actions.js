@@ -29,3 +29,9 @@ export function web3Loaded(connection) {
     }
   }
   
+  export function cancelledOrdersLoaded(cancelledOrders) {
+    return {
+      type: 'CANCELLED_ORDERS_LOADED',
+      cancelledOrders
+    }
+  }
