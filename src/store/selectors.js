@@ -1,5 +1,6 @@
 import { get } from 'lodash'
 import { createSelector } from 'reselect'
+import { ETHER_ADDRESS, tokens, ether } from '../helpers'
 
 const account = state => get(state, 'web3.account')
 export const accountSelector = createSelector(account, a => a)
@@ -18,3 +19,52 @@ export const contractsLoadedSelector = createSelector(
   exchangeLoaded,
   (tl, el) => (tl && el)
 )
+
+const filledOrdersLoaded = state => get(state, 'exchange.filledOrders.loaded', false)
+export const filledOrdersLoadedSelector = createSelector(filledOrdersLoaded, loaded => loaded)
+
+const filledOrders = state => get(state, 'exchange.filledOrders.data', [])
+export const filledOrdersSelector = createSelector(
+  filledOrders, 
+  (orders) => {
+    // Decorate the orders
+    orders = decorateFilledOrders(orders)
+
+    // Sort orders by date descending for display
+    orders = orders.sort((a,b) => b.timestamp -a.timestamp)
+    console.log(orders)
+  }
+)
+
+const decorateFilledOrders = (orders) => {
+  return(
+    orders.map((order) => {
+      return order = decorateOrder(order)
+    })
+  )
+}
+
+const decorateOrder = (order) => {
+  let etherAmount
+  let tokenAmount
+
+  if(order.tokenGive === ETHER_ADDRESS) {
+    etherAmount = order.amountGive
+    tokenAmount = order.amountGet
+  } else {
+    etherAmount = order.amountGet
+    tokenAmount = order.amountGive
+  }
+
+  // calculate token price to 5 decimal places
+  const precision = 100000
+  let tokenPrice = (etherAmount / tokenAmount)
+  tokenPrice = Math.round(tokenPrice * precision) / precision
+
+  return({
+    ...order,
+    etherAmount: ether(etherAmount),
+    tokenAmount: tokens(tokenAmount),
+    tokenPrice
+  })
+}
